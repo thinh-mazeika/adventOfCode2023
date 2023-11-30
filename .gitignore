@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# TypeScript
+*.tsbuildinfo
+dist/
+
+# Editor files
+.vscode/
+.idea/
+
+# Jest coverage output
+coverage/
+
+# Yeoman generator output
+generators/
+
+# Ignore artifacts of your build system
+*.log
+*.log*
+*.tmp
+*.tmp*
+*.swp
