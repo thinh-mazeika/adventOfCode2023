@@ -2,15 +2,20 @@ interface RoundObject {
   [color: string]: number
 }
 
+interface GameObject {
+  ID: string
+  rounds: Record<string, RoundObject>
+}
+
 const allowedMaxCubesMap: Record<string, number> = {
   red: 12,
   green: 13,
   blue: 14,
-}
+} as const
 
-const calculateSumGameID = (dataArray: string[]): number => {
-  const transformedArray = dataArray.map((gameString: string) => {
-    const [cubeID, roundsString] = gameString.split(':')
+const getGames = (dataArray: string[]) => {
+  return dataArray.map((gameString: string) => {
+    const [ID, roundsString] = gameString.split(':')
     const rounds: Record<string, RoundObject> = {}
 
     roundsString.split(';').forEach((round, index) => {
@@ -28,12 +33,14 @@ const calculateSumGameID = (dataArray: string[]): number => {
     })
 
     return {
-      cubeID: cubeID.replace('Game', '').trim(),
+      ID: ID.replace('Game', '').trim(),
       rounds,
     }
   })
+}
 
-  const filteredArray = transformedArray.filter((game) => {
+const getValidGames = (gamesObject: GameObject[]) => {
+  return gamesObject.filter((game: GameObject) => {
     const rounds = Object.values(game.rounds)
 
     const hasRoundWithMaxCubes = rounds.some((round) => {
@@ -45,9 +52,15 @@ const calculateSumGameID = (dataArray: string[]): number => {
 
     return !hasRoundWithMaxCubes
   })
+}
 
-  const sum = filteredArray.reduce((acc, game) => {
-    return acc + parseInt(game.cubeID)
+const calculateSumGameID = (dataArray: string[]): number => {
+  const gamesObject = getGames(dataArray)
+
+  const validGames = getValidGames(gamesObject)
+
+  const sum = validGames.reduce((acc, game) => {
+    return acc + parseInt(game.ID)
   }, 0)
 
   return sum

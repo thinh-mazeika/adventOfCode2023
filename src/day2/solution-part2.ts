@@ -2,9 +2,9 @@ interface RoundObject {
   [color: string]: number
 }
 
-const calculatePowerSum = (dataArray: string[]): number => {
-  const transformedArray = dataArray.map((gameString: string) => {
-    const [cubeID, roundsString] = gameString.split(':')
+const getValidGames = (dataArray: string[]) => {
+  return dataArray.map((gameString: string) => {
+    const [ID, roundsString] = gameString.split(':')
     const rounds: Record<string, RoundObject> = {}
 
     roundsString.split(';').forEach((round, index) => {
@@ -17,6 +17,7 @@ const calculatePowerSum = (dataArray: string[]): number => {
       items.forEach(([quantity, color]) => {
         roundObject[color] = parseInt(quantity)
       })
+
       rounds[`round${index + 1}`] = roundObject
     })
 
@@ -30,14 +31,17 @@ const calculatePowerSum = (dataArray: string[]): number => {
     const result = maxValues.red * maxValues.green * maxValues.blue
 
     return {
-      cubeID: cubeID.replace('Game', '').trim(),
+      ID: ID.replace('Game', '').trim(),
       rounds,
       result,
     }
   })
+}
 
-  // calculate sum of result in each game
-  const sum = transformedArray.reduce((acc, game) => {
+const calculatePowerSum = (dataArray: string[]): number => {
+  const validGames = getValidGames(dataArray)
+
+  const sum = validGames.reduce((acc, game) => {
     return acc + game.result
   }, 0)
 
