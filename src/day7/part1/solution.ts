@@ -1,7 +1,10 @@
 export function solutionPart1(input: string): number {
-  const lines = input.split('\n')
-  const hands = lines.map(getHand).sort(compareHands)
-  return hands.map((hand, index) => hand.bid * (index + 1)).reduce((prev, curr) => prev + curr, 0)
+  return input
+    .split('\n')
+    .map(getHand)
+    .sort(compareHands)
+    .map((hand, index) => hand.bid * (index + 1))
+    .reduce((prev, curr) => prev + curr, 0)
 }
 
 function compareHands(a: Hand, b: Hand): number {
