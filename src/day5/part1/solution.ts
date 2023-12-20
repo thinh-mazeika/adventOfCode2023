@@ -1,35 +1,26 @@
-const destinationToSourceMapNames = [
-  'seed-to-soil map',
-  'soil-to-fertilizer map',
-  'fertilizer-to-water map',
-  'water-to-light map',
-  'light-to-temperature map',
-  'temperature-to-humidity map',
-  'humidity-to-location map',
-]
-
 export function solutionPart1(input: string): number {
-  const lines = input.split('\n')
-  destinationToSourceMapNames.forEach((mapName) => {
-    const map = getMap(lines, mapName)
-    console.log({ map })
-  })
-  return 35
+  const lines = input.split('\n\n')
+  const seeds = lines[0]
+    .split(': ')[1]
+    .split(' ')
+    .map((seed) => Number(seed))
+  const maps = lines.slice(1).map((x) =>
+    x
+      .split('\n')
+      .slice(1)
+      .map((y) => y.split(' ').map((z) => Number(z))),
+  )
+  return Math.min(...seeds.map((seed) => getSeedLocation(maps, seed)))
 }
 
-function getMap(lines: string[], type: string): DestinationToSourceMap {
-  const foundIndex = lines.findIndex((line) => line.startsWith(`${type}:`))
-  const emptyLineIndex = lines.findIndex((line, index) => index > foundIndex && line === '')
-  if (type === 'humidity-to-location map') {
-    return {
-      [type]: lines.slice(foundIndex + 1),
+function getSeedLocation(almanac: number[][][], step: number): number {
+  for (const almanacEntry of almanac) {
+    for (const [destination, source, length] of almanacEntry) {
+      if (source <= step && source + length > step) {
+        step = destination + step - source
+        break
+      }
     }
   }
-  return {
-    [type]: lines.slice(foundIndex + 1, emptyLineIndex),
-  }
-}
-
-type DestinationToSourceMap = {
-  [key: string]: string[]
+  return step
 }
